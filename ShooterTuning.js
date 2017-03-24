@@ -10,7 +10,7 @@ var recording = false;
 var count1 = 1;
 var count2 = 1;
 
-var chartLabels = ['Time', 'Requested Val', 'Actual Val', 'F', 'P', 'I', 'D'];
+var chartLabels = ['Time', 'Setpoint', 'Angle', 'F', 'P', 'I', 'D'];
 
 $(document).ready(function(){
 	NetworkTables.addGlobalListener(onValueChanged, true);
@@ -39,7 +39,7 @@ $(document).ready(function(){
 
 				i++;
 
-				var y1 = parseFloat($("#val").val());
+				var y1 = parseFloat($("#setpoint").val());
 				var y2 = actualVal;
 				var kF = parseFloat($('#kF').val());
 				var kP = parseFloat($('#kP').val());
@@ -89,13 +89,13 @@ $(document).ready(function(){
 	}
 
 function sendParms() {
-	NetworkTables.putValue('/arm/setPoint', $('#val').val());
+	NetworkTables.putValue('/arm/setpoint', $('#setpoint').val());
 	NetworkTables.putValue('/arm/kF', $('#kF').val());
 	NetworkTables.putValue('/arm/kP', $('#kP').val());
 	NetworkTables.putValue('/arm/kI', $('#kI').val());
 	NetworkTables.putValue('/arm/kD', $('#kD').val());
 
-	localStorage.setItem('setPoint', $('#val').val());
+	localStorage.setItem('setpoint', $('#val').val());
 	localStorage.setItem('kF', $('#kF').val());
 	localStorage.setItem('kP', $('#kP').val());
 	localStorage.setItem('kI', $('#kI').val());
@@ -103,7 +103,7 @@ function sendParms() {
 }
 
 function initFromLocalStorage() {
-	$('#val').val(localStorage.getItem('setPoint'));
+	$('#setpoint').val(localStorage.getItem('setpoint'));
 	$('#kF').val(localStorage.getItem('kF'));
 	$('#kP').val(localStorage.getItem('kP'));
 	$('#kI').val(localStorage.getItem('kI'));
@@ -112,8 +112,8 @@ function initFromLocalStorage() {
 
 function onValueChanged(key, value, isNew) {
 
-	if (key == '/arm/val') {
-		actualVal = Math.abs(parseInt(value));
+	if (key == '/arm/angle') {
+		actualVal = parseInt(value);
 	}
 
 }
