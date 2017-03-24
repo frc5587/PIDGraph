@@ -13,7 +13,6 @@ var count2 = 1;
 var chartLabels = ['Time', 'Requested Val', 'Actual Val', 'F', 'P', 'I', 'D'];
 
 $(document).ready(function(){
-	// sets a function that will be called when any NetworkTables key/value changes
 	NetworkTables.addGlobalListener(onValueChanged, true);
 
 	initFromLocalStorage();
@@ -50,10 +49,10 @@ $(document).ready(function(){
 				//if (i < 5) { alert(y1 + '   ' + y2 + (i/10.0));}
 				data.push([i/10.0, y1, y2, kF, kP, kI, kD]);
 
-				if (i > 120) {
+				if (i > 100) {
 					data.shift();
 				}
-				if(recording && i % 120 === 0 && i > 0){
+				if(recording && i % 100 === 0 && i > 0){
 	  			saveData();
 	  		}
 				//file can point to an actual system file or an array
@@ -66,7 +65,6 @@ $(document).ready(function(){
 	});
 
 	createchart();
-	//NetworkTables.addKeyListener('velocity', onVelocityChanged, true);
 	});
 	function saveData(){
 		var now = new Date();
@@ -97,40 +95,23 @@ function sendParms() {
 	NetworkTables.putValue('/arm/iGain', $('#iGain').val());
 	NetworkTables.putValue('/arm/dGain', $('#dGain').val());
 
-	Lockr.set('setPoint', $('#val').val());
-	Lockr.set('fGain', $('#fGain').val());
-	Lockr.set('pGain', $('#pGain').val());
-	Lockr.set('iGain', $('#iGain').val());
-	Lockr.set('dGain', $('#dGain').val());
+	localStorage.setItem('setPoint', $('#val').val());
+	localStorage.setItem('fGain', $('#fGain').val());
+	localStorage.setItem('pGain', $('#pGain').val());
+	localStorage.setItem('iGain', $('#iGain').val());
+	localStorage.setItem('dGain', $('#dGain').val());
 }
 
 function initFromLocalStorage() {
-	$('#val').val(Lockr.get('setPoint'));
-	$('#fGain').val(Lockr.get('fGain'));
-	$('#pGain').val(Lockr.get('pGain'));
-	$('#iGain').val(Lockr.get('iGain'));
-	$('#dGain').val(Lockr.get('dGain'));
+	$('#val').val(localStorage.getItem('setPoint'));
+	$('#fGain').val(localStorage.getItem('fGain'));
+	$('#pGain').val(localStorage.getItem('pGain'));
+	$('#iGain').val(localStorage.getItem('iGain'));
+	$('#dGain').val(localStorage.getItem('dGain'));
 }
 
 function onValueChanged(key, value, isNew) {
 
-	// key thing here: we're using the various NetworkTable keys as
-	// the id of the elements that we're appending, for simplicity. However,
-	// the key names aren't always valid HTML identifiers, so we use
-	// the NetworkTables.keyToId() function to convert them appropriately
-
-	if (isNew) {
-		var tr = $('<tr/>').appendTo($('#nt > tbody:last'));
-		$('<td/>').text(key).appendTo(tr);
-		$('<td></td>').attr('id', NetworkTables.keyToId(key))
-					   .text(value)
-					   .appendTo(tr);
-	} else {
-
-		// similarly, use keySelector to convert the key to a valid jQuery
-		// selector. This should work for class names also, not just for ids
-		$('#' + NetworkTables.keySelector(key)).text(value);
-	}
 	if (key == '/arm/val') {
 		actualVal = Math.abs(parseInt(value));
 	}
@@ -147,7 +128,7 @@ function createchart() {
 							colors: ["rgb(40,220,40)", "rgb(0, 62, 126)"],
 							drawPoints: true,
 							showRoller: false,
-							valueRange: [-10, 100],
+							valueRange: [-20, 110],
 							labels: chartLabels
 							});
 
