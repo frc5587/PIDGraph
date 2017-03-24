@@ -41,10 +41,10 @@ $(document).ready(function(){
 
 				var y1 = parseFloat($("#val").val());
 				var y2 = actualVal;
-				var kF = parseFloat($('#fGain').val());
-				var kP = parseFloat($('#pGain').val());
-				var kI = parseFloat($('#iGain').val());
-				var kD = parseFloat($('#dGain').val());
+				var kF = parseFloat($('#kF').val());
+				var kP = parseFloat($('#kP').val());
+				var kI = parseFloat($('#kI').val());
+				var kD = parseFloat($('#kD').val());
 
 				//if (i < 5) { alert(y1 + '   ' + y2 + (i/10.0));}
 				data.push([i/10.0, y1, y2, kF, kP, kI, kD]);
@@ -90,24 +90,24 @@ $(document).ready(function(){
 
 function sendParms() {
 	NetworkTables.putValue('/arm/setPoint', $('#val').val());
-	NetworkTables.putValue('/arm/fGain', $('#fGain').val());
-	NetworkTables.putValue('/arm/pGain', $('#pGain').val());
-	NetworkTables.putValue('/arm/iGain', $('#iGain').val());
-	NetworkTables.putValue('/arm/dGain', $('#dGain').val());
+	NetworkTables.putValue('/arm/kF', $('#kF').val());
+	NetworkTables.putValue('/arm/kP', $('#kP').val());
+	NetworkTables.putValue('/arm/kI', $('#kI').val());
+	NetworkTables.putValue('/arm/kD', $('#kD').val());
 
 	localStorage.setItem('setPoint', $('#val').val());
-	localStorage.setItem('fGain', $('#fGain').val());
-	localStorage.setItem('pGain', $('#pGain').val());
-	localStorage.setItem('iGain', $('#iGain').val());
-	localStorage.setItem('dGain', $('#dGain').val());
+	localStorage.setItem('kF', $('#kF').val());
+	localStorage.setItem('kP', $('#kP').val());
+	localStorage.setItem('kI', $('#kI').val());
+	localStorage.setItem('kD', $('#kD').val());
 }
 
 function initFromLocalStorage() {
 	$('#val').val(localStorage.getItem('setPoint'));
-	$('#fGain').val(localStorage.getItem('fGain'));
-	$('#pGain').val(localStorage.getItem('pGain'));
-	$('#iGain').val(localStorage.getItem('iGain'));
-	$('#dGain').val(localStorage.getItem('dGain'));
+	$('#kF').val(localStorage.getItem('kF'));
+	$('#kP').val(localStorage.getItem('kP'));
+	$('#kI').val(localStorage.getItem('kI'));
+	$('#kD').val(localStorage.getItem('kD'));
 }
 
 function onValueChanged(key, value, isNew) {
