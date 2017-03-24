@@ -4,16 +4,13 @@
 var data=[];
 
 var actualVal;
-var requestedVal;
-
 var lineChart;
-var labels = [];
 var i = 0;
 var recording = false;
 var count1 = 1;
 var count2 = 1;
 
-var chartLabels = ['Time', 'Requested Val', 'Actual Val', 'P', 'I', 'D'];
+var chartLabels = ['Time', 'Requested Val', 'Actual Val', 'F', 'P', 'I', 'D'];
 
 $(document).ready(function(){
 	// sets a function that will be called when any NetworkTables key/value changes
@@ -26,7 +23,7 @@ $(document).ready(function(){
 	});
 
 	$('#toggleRecording').change(function() {
-		count1+=1;
+		count1++;
 		if(count1 % 2 === 0){
 			recording = true;
 		}
@@ -41,16 +38,17 @@ $(document).ready(function(){
 			data = [];
 			window.IntervalId = setInterval(function() {
 
-				i = i + 1;
+				i++;
 
-				var y1 = parseInt($("#val").val());
+				var y1 = parseFloat($("#val").val());
 				var y2 = actualVal;
-				var p = parseInt($('#pGain').val());
-				var i = parseInt($('#iGain').val());
-				var d = parseInt($('#dGain').val());
+				var kF = parseFloat($('#fGain').val());
+				var kP = parseFloat($('#pGain').val());
+				var kI = parseFloat($('#iGain').val());
+				var kD = parseFloat($('#dGain').val());
 
 				//if (i < 5) { alert(y1 + '   ' + y2 + (i/10.0));}
-				data.push([i/10.0, y1, y2, p, i, d]);
+				data.push([i/10.0, y1, y2, kF, kP, kI, kD]);
 
 				if (i > 120) {
 					data.shift();
@@ -94,11 +92,13 @@ $(document).ready(function(){
 
 function sendParms() {
 	NetworkTables.putValue('/arm/setPoint', $('#val').val());
+	NetworkTables.putValue('/arm/fGain', $('#fGain').val());
 	NetworkTables.putValue('/arm/pGain', $('#pGain').val());
 	NetworkTables.putValue('/arm/iGain', $('#iGain').val());
 	NetworkTables.putValue('/arm/dGain', $('#dGain').val());
 
 	Lockr.set('setPoint', $('#val').val());
+	Lockr.set('fGain', $('#fGain').val());
 	Lockr.set('pGain', $('#pGain').val());
 	Lockr.set('iGain', $('#iGain').val());
 	Lockr.set('dGain', $('#dGain').val());
@@ -106,6 +106,7 @@ function sendParms() {
 
 function initFromLocalStorage() {
 	$('#val').val(Lockr.get('setPoint'));
+	$('#fGain').val(Lockr.get('fGain'));
 	$('#pGain').val(Lockr.get('pGain'));
 	$('#iGain').val(Lockr.get('iGain'));
 	$('#dGain').val(Lockr.get('dGain'));
@@ -131,7 +132,7 @@ function onValueChanged(key, value, isNew) {
 		$('#' + NetworkTables.keySelector(key)).text(value);
 	}
 	if (key == '/arm/val') {
-		shooter_left_actualRPM = Math.abs(parseInt(value));
+		actualVal = Math.abs(parseInt(value));
 	}
 
 }
@@ -143,7 +144,7 @@ function createchart() {
 							{
 							height: 400,
 							width: 950,
-							colors: ["rgb(40,220,40)", "rgb(0, 62, 126)", "rgb(40,220,40)", "rgb(254,205,10)"],
+							colors: ["rgb(40,220,40)", "rgb(0, 62, 126)"],
 							drawPoints: true,
 							showRoller: false,
 							valueRange: [-10, 100],
